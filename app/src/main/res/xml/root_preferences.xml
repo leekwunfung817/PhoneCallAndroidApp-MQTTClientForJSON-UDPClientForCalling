@@ -1,0 +1,42 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/settings_title_server">
+
+        <EditTextPreference
+            app:key="settings_server_ip"
+            app:title="@string/settings_server_ip"
+            app:useSimpleSummaryProvider="true" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/settings_title_sound">
+
+        <EditTextPreference
+            app:key="settings_sound_server_ip"
+            app:title="@string/settings_sound_server_ip"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="settings_sound_server_port"
+            app:title="@string/settings_sound_server_port"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:key="settings_sound_local_port"
+            app:title="@string/settings_sound_local_port"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/settings_title_alert">
+
+        <SwitchPreferenceCompat
+            app:key="settings_alert_ring"
+            app:defaultValue="true"
+            app:title="@string/settings_alert_ring" />
+        <SwitchPreferenceCompat
+            app:key="settings_alert_vibrate"
+            app:defaultValue="false"
+            app:title="@string/settings_alert_vibrate" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
