@@ -9,23 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class DeviceContent {
-
     //所有设备数据的数组
     public static final List<DeviceItem> ITEMS = new ArrayList<DeviceItem>();
-
     //用id标识的数据集合，便于用id查找
     public static final Map<String, DeviceItem> ITEM_MAP = new HashMap<String, DeviceItem>();
-
     public static List<DeviceItem> DeviceJSONArrayToList(JSONArray jsonArray) {
-
         try {
-
-
             ITEMS.clear();
-
-           String msg_type = "";
+            String msg_type = "";
             String username;
             String car_park_id;
             String device_id;
@@ -52,7 +44,7 @@ public class DeviceContent {
                 msg_type = jsonObject.getString("msg_type");
                 if(msg_type.equals("17"))
                 {
-                     username = jsonObject.getString("username");
+                    username = jsonObject.getString("username");
                     car_park_id = jsonObject.getString("car_park_id");
                     device_id = jsonObject.getString("device_id");
                     device_remark = jsonObject.getString("device_remark");
@@ -66,8 +58,7 @@ public class DeviceContent {
 
                 }
             }
-        }
-        catch (JSONException e)
+        } catch (JSONException e)
         {
             e.printStackTrace();
         }
@@ -98,7 +89,7 @@ public class DeviceContent {
         public final String username;
         public final String car_park_id;
         public final String device_id;
-        public final String device_remark;
+        public String device_remark;
         public final String device_type;
         public final String time;
         public final String version;
@@ -134,7 +125,6 @@ public class DeviceContent {
             this.call_time = 0;
             this.udp_ip = 0;
             this.udp_port = 0;
-
         }
 
         @Override

@@ -34,31 +34,28 @@ import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 
 public class UdpSoundServer extends Thread {
+    static byte CPOS_TEL_FUN_FREE = 0;//空闲
+    static byte CPOS_TEL_FUN_CALL = 1;//呼叫
+    static byte CPOS_TEL_FUN_HANG_UP = 2;//挂断
+    static byte CPOS_TEL_FUN_ANSWER = 3;//接听
+    static byte CPOS_TEL_FUN_DATA = 4;//声音BIN数据
+    static byte CPOS_TEL_FUN_BUSY = 5;//忙线指令
+    static byte CPOS_TEL_FUN_CONNECT = 6;//正在接通中
+    static byte CPOS_TEL_FUN_INCOMING = 7;//有电话进来
+
+    static byte UDP_DATA_HEAD = 'A';
+    static byte UDP_DATATYPE_TEXT = 0x01;//文本数据
+    static byte UDP_DATA_TYPE_BIN = 0x02;//二进制数据
+    static byte UDP_DATA_TYPE_JSON = 0x03;//json数据
+    static byte UDP_DATA_TYPE_CTRL = 0x04;//控制数据
+    static byte UDP_DATA_TYPE_EXCHANGE = 0x05;//交换数据
 
 
-        static byte CPOS_TEL_FUN_FREE = 0;//空闲
-        static byte CPOS_TEL_FUN_CALL = 1;//呼叫
-        static byte CPOS_TEL_FUN_HANG_UP = 2;//挂断
-        static byte CPOS_TEL_FUN_ANSWER = 3;//接听
-        static byte CPOS_TEL_FUN_DATA = 4;//声音BIN数据
-        static byte CPOS_TEL_FUN_BUSY = 5;//忙线指令
-        static byte CPOS_TEL_FUN_CONNECT = 6;//正在接通中
-        static byte CPOS_TEL_FUN_INCOMING = 7;//有电话进来
-
-
-        static byte UDP_DATA_HEAD = 'A';
-        static byte UDP_DATATYPE_TEXT = 0x01;//文本数据
-        static byte UDP_DATA_TYPE_BIN = 0x02;//二进制数据
-        static byte UDP_DATA_TYPE_JSON = 0x03;//json数据
-        static byte UDP_DATA_TYPE_CTRL = 0x04;//控制数据
-        static byte UDP_DATA_TYPE_EXCHANGE = 0x05;//交换数据
-
-
-        private AudioTrack audioTrack = null;
-        private static int sampleRateInHz = 8000;
-        private static int channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
-        private static int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
-        private int bufferSize = AudioTrack.getMinBufferSize(sampleRateInHz, channelOutConfig, audioFormat);
+    private AudioTrack audioTrack = null;
+    private static int sampleRateInHz = 8000;
+    private static int channelOutConfig = AudioFormat.CHANNEL_OUT_MONO;
+    private static int audioFormat = AudioFormat.ENCODING_PCM_8BIT;
+    private int bufferSize = AudioTrack.getMinBufferSize(sampleRateInHz, channelOutConfig, audioFormat);
 
 
     private static int channelInConfig = AudioFormat.CHANNEL_IN_MONO;
@@ -76,16 +73,16 @@ public class UdpSoundServer extends Thread {
         int mUdpPort = 0;
         private boolean mLift = true;
 
-        //记录要通话的客户端的ip和端口
-        //因为使用UDP服务器中转方式通讯，所以此处记录到的应该与语音服务器相同
-        //如果使用P2P方式通讯，此处记录的应该是客户端的IP和端口
-        String mClientIp = "";
-        int mClientPort = 0;
-         String mClientCarParkId = "";
-         int mClientDeviceId = 0;
-         int mClientDeviceType = 0;
+    //记录要通话的客户端的ip和端口
+    //因为使用UDP服务器中转方式通讯，所以此处记录到的应该与语音服务器相同
+    //如果使用P2P方式通讯，此处记录的应该是客户端的IP和端口
+    String mClientIp = "";
+    int mClientPort = 0;
+    String mClientCarParkId = "";
+    int mClientDeviceId = 0;
+    int mClientDeviceType = 0;
 
-         //本机编号
+    //本机编号
     String mMyCarParkId = "";
     int mMyDeviceId = 0;
     int mMyDeviceType = 0;

@@ -15,6 +15,7 @@ import com.cpos.cposmonitor.ui.login.LoginActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -36,7 +37,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import com.cpos.cposmonitor.MyApplication.SettingKey;
@@ -180,11 +183,18 @@ public class MainActivity extends AppCompatActivity implements MQTTService.IGetM
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void OnReceiveDeviceList(JSONArray device_list) {
         Log.i("MainActivity", "========== Process Device list Begin ==========");
         if (mAdapter == null ) {
             List<DeviceContent.DeviceItem> deviceItemList = DeviceContent.DeviceJSONArrayToList(device_list);
+//            for (DeviceContent.DeviceItem deviceItem:deviceItemList) {
+//                Log.i("MainActivity", "["+deviceItem.device_remark+"]-["+printHex(deviceItem.device_remark)+"]");
+////                ByteBuffer byteBuffer = StandardCharsets.ISO_8859_1.encode();
+////                String resultString = StandardCharsets.UTF_8.decode(byteBuffer).toString();
+//                deviceItem.device_remark = fromSimplifiedChineseToUTF8(deviceItem.device_remark);
+//            }
             Log.i("MainActivity",deviceItemList.toString());
             mAdapter = new SimpleItemRecyclerViewAdapter(this, deviceItemList, mTwoPane);
             mRecyclerView.setAdapter(mAdapter);
@@ -401,12 +411,12 @@ public class MainActivity extends AppCompatActivity implements MQTTService.IGetM
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mIdView.setText(mValues.get(position).id);
 
-            String str;
-            str = "Carpark ";
-            str += mValues.get(position).car_park_id;
-            str += " - ";
-            str += mValues.get(position).device_id;
-            str += " - ";
+            String str = "";
+//            str = "Carpark ";
+//            str += mValues.get(position).car_park_id;
+//            str += " - ";
+//            str += mValues.get(position).device_id;
+//            str += " - ";
             str += mValues.get(position).device_remark;
             try {
                 str = new String(str.getBytes("UTF-8"), "UTF-8");
@@ -436,5 +446,30 @@ public class MainActivity extends AppCompatActivity implements MQTTService.IGetM
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
         }
+    }
+
+    public static String printHex(String str) {
+        byte[] ch = str.getBytes();
+        return printHex(ch);
+    }
+
+    public static String printHex(byte[] ch) {
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < ch.length; i++) {
+            String hexString = String.format("%02X ", (ch[i]) & 0x0000FF);
+            sb.append(hexString);
+        }
+        String result = sb.toString();
+        return result;
+    }
+
+    public static String fromSimplifiedChineseToUTF8(String device_remark, Charset fromCharset) {
+        byte[] byteBuffer = device_remark.getBytes(fromCharset);
+        String resultString = new String(byteBuffer, Charset.forName("UTF-16"));
+        Log.i("MainActivity", "Convert from ["+device_remark+"]");
+        Log.i("MainActivity", "Convert from ["+resultString+"]");
+        Log.i("MainActivity", "HEX origin ["+printHex(device_remark)+"]");
+
+        return resultString;
     }
 }

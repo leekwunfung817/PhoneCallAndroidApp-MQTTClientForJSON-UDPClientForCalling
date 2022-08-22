@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -208,6 +209,7 @@ public class MQTTService extends Service {
     }
 
     public static String decompress(byte[] src_data) {
+        Charset fromCharset = Charset.forName("big5");
         if (src_data.length == 0) {
             return null;
         }
@@ -217,30 +219,25 @@ public class MQTTService extends Service {
         // 对byte[]进行解压
         byte[] result = array_byte(src_data.length * 2+1);;
         int resultLength = 0;
-        int i = 0;
         try {
             while (true) {
                 resultLength = decompresser.inflate(result, 0, result.length); // 返回的是解压后的的数据包大小，
-                if (resultLength > 0)
-                {
-                    strDecode += new String(result);
-                }
-                else
-                {
+                if (resultLength > 0) {
+                    strDecode += new String(result, fromCharset);
+                } else {
                     if(decompresser.needsInput() == true)//解压结束, 需要再输入数据
                     {
                         break;
                     }
-
                     break;//因为数据为一次性输入,实际返回0即表示解压结束
                 }
-                i++;//测试数据需要解压多少次
             }
         } catch (DataFormatException e) {
             e.printStackTrace();
         }
         decompresser.end();
 
+//        strDecode = MainActivity.fromSimplifiedChineseToUTF8(strDecode, fromCharset);
         return strDecode;
 
     }
@@ -477,7 +474,7 @@ public class MQTTService extends Service {
 
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
-            Log.i(TAG, "Receive Data Source： " + new String(message.getPayload()));
+            Log.i(TAG, "Receive Data Source： " + MainActivity.printHex(message.getPayload()));
 
             String str_receive = new String(decompress(message.getPayload()));
             MqttMessageReceive(topic, str_receive);
@@ -519,7 +516,6 @@ public class MQTTService extends Service {
         }
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         Log.e(getClass().getName(), "onBind");
@@ -534,26 +530,6 @@ public class MQTTService extends Service {
         public MQTTService getService() {
             return MQTTService.this;
         }
-    }
-
-    public void toCreateNotification(String message) {
-
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, new Intent(this, MQTTService.class), PendingIntent.FLAG_UPDATE_CURRENT);
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);//3、创建一个通知，属性太多，使用构造器模式
-//
-//        Notification notification = builder
-//                .setTicker("测试标题")
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setContentTitle("")
-//                .setContentText(message)
-//                .setContentInfo("")
-//                .setContentIntent(pendingIntent)//点击后才触发的意图，“挂起的”意图
-//                .setAutoCancel(true)        //设置点击之后notification消失
-//                .build();
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        startForeground(0, notification);
-//        notificationManager.notify(0, notification);
-
     }
 }
 
